@@ -3,6 +3,7 @@
 ### Created entirely from scratch.
 
 - Search for movies and TV series to watch
+- Sort by different criteria
 - Save the best
 - Dark / light mode
 - API data
