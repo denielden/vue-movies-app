@@ -151,17 +151,18 @@ ul#saved li {
 	font-size: 1rem;
 	cursor: default;
 }
-ul#saved li::before {
+ul#saved li span::before {
 	content: '❤️';
 	position: absolute;
 	left: 2.8rem;
 	font-size: .8rem;
 }
+ul#saved li span:hover::before {
+	content: '\2718';
+	color:#ff0d0d;
+}
 ul#saved li:first-child {
 	padding-top: 1rem;
-}
-ul#saved li:first-child::before {
-	content: '';
 }
 .switch {
 	position: relative;
@@ -249,6 +250,7 @@ input:checked + .slide-mode:before {
 	position: absolute;
 	right: 4rem;
 	bottom: 3rem;
+	z-index: 99;
 	padding: .1rem .5rem;
 	background-color: var(--dark-bg-overlay);
 	fill: var(--green);
@@ -264,7 +266,7 @@ input:checked + .slide-mode:before {
 	display: none;
 }
 
-.single-card, #goTop {
+ul#saved li, .single-card, #goTop {
 	animation: fadeIn ease-in 2s;
 	-webkit-animation: fadeIn ease-in 2s;
 	-moz-animation: fadeIn ease-in 2s;
@@ -272,7 +274,7 @@ input:checked + .slide-mode:before {
 	-ms-animation: fadeIn ease-in 2s;
 }
 
-select, button, .sidebar ul li, .slide-mode, #goTop {
+select, button, .sidebar ul li, ul#saved li span, .slide-mode, #goTop {
 	cursor: pointer;
 }
 
@@ -325,7 +327,9 @@ select, button, .sidebar ul li, .slide-mode, #goTop {
 	.sidebar{
 		padding: 2.5rem 0 0 0;
 	}
-	ul#saved li::before {
+	ul#saved li span::before {
+		content: '\2718';
+		color:#ff0d0d;
 		left: 1.4rem;
 	}
 	.container {

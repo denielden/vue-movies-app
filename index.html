@@ -18,7 +18,7 @@
 			<a href="https://vuejs.org/" target="_blank" rel="noopener noreferrer">
 				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 261.76 226.69"><path d="M161.096.001l-30.225 52.351L100.647.001H-.005l130.877 226.688L261.749.001z" fill="#41b883"/><path d="M161.096.001l-30.225 52.351L100.647.001H52.346l78.526 136.01L209.398.001z" fill="#34495e"/></svg>
 			</a>
-			<input v-model="query" v-on:keyup.enter="runQuery" placeholder="Search Movies and Series">
+			<input v-model.trim="query" v-on:keyup.enter="runQuery" placeholder="Search Movies and Series">
 			<nav>
 				<div id="toggleNav"></div>
 			</nav>
@@ -30,7 +30,7 @@
 
 		<div class="sidebar">
 			<ul>
-				<li>Home</li>
+				<li v-on:click="startMovie">Home</li>
 				<li>Saved movies
 					<ul id="saved">
 						<li><small>{{ saved }} Saved</small></li>
@@ -53,7 +53,7 @@
 
 		<div class="container">
 			<section id="top">
-				<h1>{{ query === '' ? 'Vikings' : query }}</h1>
+				<h1>{{ query === '' ? 'Popular Movies' : query }}</h1>
 				<p>Have been found {{ data.movies.length }} results.</p>
 				<label for="orderBy">Order by:</label>
 				<select name="orderBy" id="orderBy" v-model="orderBy" v-on:change="orderByVal">
@@ -77,7 +77,7 @@
 						<!--
 						<button :id="ele.id.replace(/\D/g, '')" v-on:click="getDetails">See details</button>
 						-->
-						<button :id="ele.title" v-on:click="saveMovie">Save Movie</button>
+						<button :id="ele.id.replace(/\D/g, '')" :value="ele.title" v-on:click="saveMovie">Save Movie</button>
 					</div>
 				</div>
 			</section>

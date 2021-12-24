@@ -38,40 +38,55 @@ var app = new Vue({
 	data: {
 		query: '',
 		data: {
-			movies: [
+			noApi: [
 				{
-					id: '/title/tt11311302/',
-					image: { url:'https://m.media-amazon.com/images/M/MV5BZmYwZDA0ODEtYTc3Mi00ZTkxLWE1MzItYjc2NTNkZGY3ODc3XkEyXkFqcGdeQXVyNjUxMjc1OTM@._V1_.jpg' },
-					title: 'Vikings: Valhalla',
-					titleType: 'tvSeries',
+					id: '/title/ff4123432/',
+					image: { url:'https://m.media-amazon.com/images/M/MV5BOTNjNWRjZDUtYjU1OC00NGFmLWE2ZDktMzhhYmIwOTU4YjVmXkEyXkFqcGdeQXVyMTEyMjM2NDc2._V1_.jpg' },
+					title: 'Fantastic Beasts: The Secrets of Dumbledore',
+					titleType: 'movie',
 					year: 2022
 				},
 				{
-					id: '/title/tt6015100/',
-					image: { url:'https://m.media-amazon.com/images/M/MV5BYjFhZjk5MjQtYWU1Ny00OGU2LWIwNWEtYjQ2ZGEwODNhMmJlL2ltYWdlXkEyXkFqcGdeQXVyNzIxMDI2NzM@._V1_.jpg' },
-					title: 'Vikings Season 3: Heavy Is the Head -the Politics of King Ragnar\'s Rule',
-					titleType: 'video',
-					year: 2015
+					id: '/title/ff10838180/',
+					image: { url:'https://m.media-amazon.com/images/M/MV5BMGJkNDJlZWUtOGM1Ny00YjNkLThiM2QtY2ZjMzQxMTIxNWNmXkEyXkFqcGdeQXVyMDM2NDM2MQ@@._V1_.jpg' },
+					title: 'The Matrix Resurrections',
+					titleType: 'movie',
+					year: 2021
 				},
 				{
-					id: '/title/tt4620502/',
-					image: { url:'https://m.media-amazon.com/images/M/MV5BOWQ5N2Q2MWUtZTlmMC00YjI5LTgyOWQtNTA4NmY5MGQzM2EwL2ltYWdlL2ltYWdlXkEyXkFqcGdeQXVyNTUwMTIyODg@._V1_.jpg' },
-					title: 'Vikings: The Viking Sagas',
-					titleType: 'video',
-					year: 2014
+					id: '/title/ff1160419/',
+					image: { url:'https://m.media-amazon.com/images/M/MV5BN2FjNmEyNWMtYzM0ZS00NjIyLTg5YzYtYThlMGVjNzE1OGViXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_.jpg' },
+					title: 'Dune',
+					titleType: 'movie',
+					year: 2021
 				},
 				{
-					id: '/title/tt2306299/',
-					image: { url:'https://m.media-amazon.com/images/M/MV5BODk4ZjU0NDUtYjdlOS00OTljLTgwZTUtYjkyZjk1NzExZGIzXkEyXkFqcGdeQXVyMDM2NDM2MQ@@._V1_.jpg' },
-					title: 'Vikings',
-					titleType: 'video',
-					year: 2013
+					id: '/title/ff11083552/',
+					image: { url:'https://m.media-amazon.com/images/M/MV5BNGVkOTlhOTktNjZiNS00NDg3LWIxMDAtZTY5Y2E0YjllN2IxXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_.jpg' },
+					title: 'Wrath of Man',
+					titleType: 'movie',
+					year: 2021
+				},
+				{
+					id: '/title/ff5180504/',
+					image: { url:'https://m.media-amazon.com/images/M/MV5BN2FiOWU4YzYtMzZiOS00MzcyLTlkOGEtOTgwZmEwMzAxMzA3XkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_.jpg' },
+					title: 'The Witcher',
+					titleType: 'tvSeries',
+					year: 2019
+				},
+				{
+					id: '/title/ff7949218/',
+					image: { url:'https://m.media-amazon.com/images/M/MV5BM2JkM2Y5NTEtZWIwZS00ZTliLTk3MDMtNzY4MDNkNjg0NTkwXkEyXkFqcGdeQXVyMDM2NDM2MQ@@._V1_.jpg' },
+					title: 'See',
+					titleType: 'tvSeries',
+					year: 2019
 				}
 			],
+			movies: [],
 			initList: [],
 			details: undefined
 		},
-		orderBy: 'date90',		
+		orderBy: 'date90',
 		saved: 0
 	},
 	methods: {
@@ -79,10 +94,9 @@ var app = new Vue({
 			document.body.classList.toggle('light');
 		},
 		// title/get-video-playback
-		// title/list-popular-genrestitle
 		// title/get-more-like-this
-		fetchHelper(ele, param = 'find?q=') {
-			fetch("https://imdb8.p.rapidapi.com/title/"+param+ele, {
+		fetchHelper(param, endPoint = 'find?q=') {
+			fetch("https://imdb8.p.rapidapi.com/title/"+endPoint+param, {
 				"method": "GET",
 				"headers": {
 					"x-rapidapi-host": "imdb8.p.rapidapi.com",
@@ -91,29 +105,40 @@ var app = new Vue({
 				}
 			})
 			.then(response => {
-				response.json();				
 				if (response.status === 429) {
 					alert('Failed to recover data:\nAPI call limit exceeded.\n\nPlease try again at the end of the month!\nSorry for the inconvenience.');
+					app.data.movies = app.data.noApi;
+					app.data.initList = app.data.noApi;
 				}
+				return response.json();
 			})
 			.catch(e => console.error(e))
 			.then(data => {
-				switch (param) {
+				switch (endPoint) {
 					case 'get-most-popular-movies?homeCountry=IT&purchaseCountry=IT&currentCountry=IT':
-						app.data.initList = data.slice(0, 45);
+						app.data.initList = data.slice(0, 50);
+
+						let stringId = '';
+						stringId = stringId.concat(app.data.initList.map(ele => '&ids=tt'+ele.replace(/\D/g, '')));
+						stringId = stringId.replaceAll(',', '').substring(1);
+
+						this.fetchHelper(stringId, 'get-meta-data?');
 						break;
 					case 'get-meta-data?':
-						//console.log(data)
-						app.data.movies = data
-						//.sort((a, b) => b.year - a.year);
+						let filteredData = [];
+						Object.keys(data).forEach(k => filteredData.push(data[k].title) );
+						filteredData = filteredData.filter(el => el.title != undefined && el.image && el.image.url != undefined)
+
+						app.data.initList = filteredData;
+						app.data.movies = filteredData;
 						break;
 					case 'get-overview-details?tconst=':
 						app.data.details = data;
 						break;
 					default:
-						app.data.movies = data.results
-							.filter(ele => ele.title != undefined && ele.image && ele.image.url != undefined)
-							.sort((a, b) => b.year - a.year);
+						let clearData = data.results.filter(ele => ele.title != undefined && ele.image && ele.image.url != undefined);
+						this.sortDecrescent(clearData);
+						app.data.movies = clearData;
 						break;
 				}
 			});
@@ -121,22 +146,18 @@ var app = new Vue({
 
 		init() {
 			this.query = '';
+			this.orderBy = 'date90';
 			this.fetchHelper('', 'get-most-popular-movies?homeCountry=IT&purchaseCountry=IT&currentCountry=IT');
-
-			let initIdList = [];
-			if(this.data.initList.length !== 0)
-			this.data.initList.map(ele => {
-				let id = 'tt' + ele.replace(/\D/g, '');
-				return initList.concat('&ids='+id);
-			})
-			.join('')
-			.substring(1);
-			
-			// this.fetchHelper(initIdList, 'get-meta-data?');
 		},
 
 		runQuery() {
+			this.orderBy = 'date90';
 			this.fetchHelper(this.query);
+		},
+
+		startMovie(){
+			this.orderBy = 'date90';
+			app.data.movies = app.data.initList;
 		},
 
 		getDetails(e) {
@@ -151,14 +172,29 @@ var app = new Vue({
 			e.target.disabled = true;
 
 			const savedMove = document.querySelector('#saved'),
-					nameMovie = e.target.id,
+					nameMovie = e.target.value,
+					idMovie = e.target.id,
 					li = document.createElement('li'),
+					span = document.createElement('span'),
 					text = document.createTextNode(nameMovie);
 
+			span.setAttribute('id', idMovie);
+			span.onclick = this.removeSavedMovie;
+			li.appendChild(span);
 			li.appendChild(text);
 			savedMove.appendChild(li);
 
 			this.saved = this.saved + 1;
+		},
+		
+		removeSavedMovie(e) {
+			e.target.parentNode.remove();
+
+			const btnMovie = document.getElementById(e.target.id);
+			btnMovie.removeAttribute('disabled');
+			btnMovie.textContent = 'Save Movie';
+
+			this.saved = this.saved - 1;
 		},
 
 		orderByVal(e) {
@@ -173,11 +209,15 @@ var app = new Vue({
 					this.data.movies.sort((a, b) => a.year - b.year);
 					break;
 				default:
-					this.data.movies.sort((a, b) => b.year - a.year);
+					this.sortDecrescent(this.data.movies);
 					break;
 			}
+		},
+
+		sortDecrescent(ele) {
+			return ele.sort((a, b) => b.year - a.year);
 		}
 	}
 });
 
-//app.init();
+app.init();
