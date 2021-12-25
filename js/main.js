@@ -87,7 +87,7 @@ var app = new Vue({
 			details: undefined
 		},
 		orderBy: 'date90',
-		saved: 0
+		saved: 0 //save in local storage obj with id and name
 	},
 	methods: {
 		toggleMode() {
@@ -153,11 +153,14 @@ var app = new Vue({
 		runQuery() {
 			this.orderBy = 'date90';
 			this.fetchHelper(this.query);
+			this.scrollTopHelper();
 		},
 
 		startMovie(){
 			this.orderBy = 'date90';
 			app.data.movies = app.data.initList;
+			document.querySelector('#toggleNav').classList.remove('active');
+			this.scrollTopHelper();
 		},
 
 		getDetails(e) {
@@ -185,6 +188,7 @@ var app = new Vue({
 			savedMove.appendChild(li);
 
 			this.saved = this.saved + 1;
+			// app.data.movies[id].saved = 1
 		},
 		
 		removeSavedMovie(e) {
@@ -216,6 +220,9 @@ var app = new Vue({
 
 		sortDecrescent(ele) {
 			return ele.sort((a, b) => b.year - a.year);
+		},
+		scrollTopHelper() {
+			document.querySelector('.container').scrollTo({ top: 0, behavior: 'smooth' });
 		}
 	}
 });

@@ -10,7 +10,7 @@
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&display=swap" rel="stylesheet">
 	<script src="js/vue.js"></script>
-	<link rel="stylesheet" href="css/style.css">
+	<link rel="stylesheet" href="css/style.min.css">
 </head>
 <body>
 
@@ -54,7 +54,7 @@
 
 		<div class="container">
 			<section id="top">
-				<h1>{{ query === '' ? 'Popular Movies' : query }}</h1>
+				<h1 class="query">{{ query === '' ? 'Popular Movies' : query }}</h1>
 				<p>Have been found {{ data.movies.length }} results.</p>
 				<label for="orderBy">Order by:</label>
 				<select name="orderBy" id="orderBy" v-model="orderBy" v-on:change="orderByVal">
@@ -94,6 +94,6 @@
 		</div>
 	</div>
 
-	<script src="js/main.js"></script>
+	<script src="js/main.min.js"></script>
 </body>
 </html>
