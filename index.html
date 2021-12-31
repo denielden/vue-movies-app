@@ -5,19 +5,19 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Vue Movies app</title>
-	<link rel="shortcut icon" href="https://denielden.github.io/img/favicon.svg" type="image/svg+xml">
-	<link rel="apple-touch-icon" href="https://denielden.github.io/img/favicon.svg">
+	<link rel="shortcut icon" href="https://vuejs.org/images/logo.svg" type="image/svg+xml">
+	<link rel="apple-touch-icon" href="https://vuejs.org/images/logo.svg">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700&display=swap" rel="stylesheet">
 	<script src="js/vue.js"></script>
-	<link rel="stylesheet" href="css/style.min.css">
+	<link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
 	<div id="vue-container">
 		<header>
 			<a href="https://vuejs.org/" target="_blank" rel="noopener noreferrer">
-				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 261.76 226.69"><path d="M161.096.001l-30.225 52.351L100.647.001H-.005l130.877 226.688L261.749.001z" fill="#41b883"/><path d="M161.096.001l-30.225 52.351L100.647.001H52.346l78.526 136.01L209.398.001z" fill="#34495e"/></svg>
+				<img src="https://vuejs.org/images/logo.svg" class="logo" alt="Vue logo">
 			</a>
 			<input v-model.trim="query" v-on:keyup.enter="runQuery" placeholder="Search Movies and Series">
 			<nav>
@@ -34,7 +34,12 @@
 				<li v-on:click="startMovie">Home</li>
 				<li>Saved movies
 					<ul id="saved">
-						<li><small>{{ saved }} Saved</small></li>
+						<li><small>{{ data.saved.length }} Saved</small></li>
+						<li v-for="movieSaved in data.saved" :key="movieSaved.id">
+							<span :data-id="clearIdMovie(movieSaved.id)" v-on:click="removeSavedMovie"></span>
+							{{ movieSaved.title }}
+						</li>
+						<li class="see-all-saved" v-if="data.saved.length !== 0" v-on:click="seeAllSaved">See all saved</li>
 					</ul>
 				</li>
 				<li>
@@ -53,8 +58,8 @@
 		</div>
 
 		<div class="container">
-			<section id="top">
-				<h1 class="query">{{ query === '' ? 'Popular Movies' : query }}</h1>
+			<section>
+				<h1 class="title">{{ title }}</h1>
 				<p>Have been found {{ data.movies.length }} results.</p>
 				<label for="orderBy">Order by:</label>
 				<select name="orderBy" id="orderBy" v-model="orderBy" v-on:change="orderByVal">
@@ -66,19 +71,17 @@
 			</section>
 
 			<section class="grid-cards">
-				<div class="single-card" v-for="ele in data.movies">
+				<div class="single-card" v-for="movie in data.movies" :key="movie.id">
 					<div class="card-img">
-						<img :src="ele.image && ele.image.url" loading="lazy" :alt="ele.title">
+						<img :src="movie.image && movie.image.url" loading="lazy" :alt="movie.title">
 					</div>
 
 					<div class="info-card">
-						<h1>{{ ele.title }}</h1>
-						<p><i>{{ ele.titleType }}</i></p>
-						<p>{{ ele.year }}</p>
-						<!--
-						<button :id="ele.id.replace(/\D/g, '')" v-on:click="getDetails">See details</button>
-						-->
-						<button :id="ele.id.replace(/\D/g, '')" :value="ele.title" v-on:click="saveMovie">Save Movie</button>
+						<h1>{{ movie.title }}</h1>
+						<p><i>{{ movie.titleType }}</i></p>
+						<p>{{ movie.year }}</p>
+						<button v-if="title === 'Saved Movies'" :id="clearIdMovie(movie.id)" :key="'tt'+clearIdMovie(movie.id)" v-on:click="getDetails">See details</button>
+						<button v-else :id="clearIdMovie(movie.id)" :value="movie.title" :key="movie.id" v-on:click="saveMovie">Save Movie</button>
 					</div>
 				</div>
 			</section>
@@ -88,12 +91,38 @@
 				<br>
 				Source data: <a href="https://rapidapi.com/apidojo/api/imdb8/" target="_blank" rel="noopener noreferrer">RapidAPI</a>
 			</small>
-			<a href="#top" id="goTop">
+			<div id="goTop" v-on:click="scrollTopOn">
 				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 450"><path d="M168.5 164.2l148 146.8c4.7 4.7 4.7 12.3 0 17l-19.8 19.8c-4.7 4.7-12.3 4.7-17 0L160 229.3 40.3 347.8c-4.7 4.7-12.3 4.7-17 0L3.5 328c-4.7-4.7-4.7-12.3 0-17l148-146.8c4.7-4.7 12.3-4.7 17 0z"></path></svg>
-			</a>
+			</div>
+		</div>
+
+		<div id="modal" v-if="showModal" v-on:click.self="showModal=false">
+			<div class="modal-box">
+				<img :src="data.details.title && data.details.title.image && data.details.title.image.url" loading="lazy" :alt="data.details.title && data.details.title.title">
+				<div class="modal-content">
+					<h1>{{ data.details.title && data.details.title.title }}</h1>
+					<p>
+						<i>{{ data.details.title && data.details.title.titleType }}</i>
+						<b class="rating" v-if="data.details.ratings.canRate">
+							{{ data.details.ratings && data.details.ratings.rating }}
+						</b>
+					</p>
+					<p>
+						<b>Year:</b> {{ data.details.title && data.details.title.year }}
+						<br>
+						<b>Release Date:</b> {{ reverseDate(data.details.releaseDate) }}
+					</p>
+					<ul class="genres">
+						<li v-for="genre in data.details.genres" :key="genre">{{ genre }}</li>
+					</ul>
+					<h2>Plot:</h2>
+					<p><b>Small plot:</b> {{ data.details.plotOutline && data.details.plotOutline.text }}</p>
+					<p class="mt-2">{{ data.details.plotSummary && data.details.plotSummary.text }}</p>
+				</div>
+			</div>
 		</div>
 	</div>
 
-	<script src="js/main.min.js"></script>
+	<script src="js/main.js"></script>
 </body>
 </html>

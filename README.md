@@ -4,7 +4,8 @@
 
 - Search for movies and TV series to watch
 - Sort by different criteria
-- Save the best
+- Save the best in localStorage
+- See details of movies saved
 - Dark / light mode
 - API data
 
@@ -15,7 +16,7 @@ The `main.js` handles `API` calls through Vue while `Vanilla javascript` takes c
 Source data from `API` of [RapidAPI](https://rapidapi.com/apidojo/api/imdb8/). 
 
 
-## ` - work in progress - ` 
+## ` - work in progress - `
 
 
 ## Licence 

@@ -3,7 +3,7 @@
 *	Author: Deniel Den
 *	Author URI: https://www.linkedin.com/in/denielden
 *	Source API: https://rapidapi.com/apidojo/api/imdb8/
-*	Version: 1.0.0
+*	Version: 1.0.1
 ************************************************** */
 window.onload = () => {
 	const navBtn = document.querySelector('nav'),
@@ -36,66 +36,94 @@ window.onload = () => {
 var app = new Vue({
 	el: '#vue-container',
 	data: {
+		title: 'Popular Movies',
 		query: '',
 		data: {
 			noApi: [
 				{
-					id: '/title/ff4123432/',
-					image: { url:'https://m.media-amazon.com/images/M/MV5BOTNjNWRjZDUtYjU1OC00NGFmLWE2ZDktMzhhYmIwOTU4YjVmXkEyXkFqcGdeQXVyMTEyMjM2NDc2._V1_.jpg' },
-					title: 'Fantastic Beasts: The Secrets of Dumbledore',
+					id: '/title/tt11138512/',
+					image: { url:'https://m.media-amazon.com/images/M/MV5BMDNkMTVlODUtNjBlMi00ZTUyLWI5OTItZTFjMjVlMTA5MTkzXkEyXkFqcGdeQXVyODk4OTc3MTY@._V1_.jpg' },
+					title: 'The Northman',
 					titleType: 'movie',
 					year: 2022
 				},
 				{
-					id: '/title/ff10838180/',
+					id: '/title/tt11198330/',
+					image: { url:'https://m.media-amazon.com/images/M/MV5BMTFmZjZjOWItOWY0NC00ZDA1LWFhN2ItMDI1ZGNmNGE2NGJmXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_.jpg' },
+					title: 'House of the Dragon',
+					titleType: 'tvSeries',
+					year: 2022
+				},
+				{
+					id: '/title/tt13320622/',
+					image: { url:'https://m.media-amazon.com/images/M/MV5BYzdkOWYwOTEtMDFiYS00MzYzLWI0MmMtNjE1ODcyNDJjMTFiXkEyXkFqcGdeQXVyMTEyMjM2NDc2._V1_.jpg' },
+					title: 'The Lost City',
+					titleType: 'movie',
+					year: 2022
+				},
+				{
+					id: '/title/tt10919420/',
+					image: { url:'https://m.media-amazon.com/images/M/MV5BYWE3MDVkN2EtNjQ5MS00ZDQ4LTliNzYtMjc2YWMzMDEwMTA3XkEyXkFqcGdeQXVyMTEzMTI1Mjk3._V1_.jpg' },
+					title: 'Squid Game',
+					titleType: 'tvSeries',
+					year: 2021
+				},
+				{
+					id: '/title/tt10838180/',
 					image: { url:'https://m.media-amazon.com/images/M/MV5BMGJkNDJlZWUtOGM1Ny00YjNkLThiM2QtY2ZjMzQxMTIxNWNmXkEyXkFqcGdeQXVyMDM2NDM2MQ@@._V1_.jpg' },
 					title: 'The Matrix Resurrections',
 					titleType: 'movie',
 					year: 2021
 				},
 				{
-					id: '/title/ff1160419/',
+					id: '/title/tt1160419/',
 					image: { url:'https://m.media-amazon.com/images/M/MV5BN2FjNmEyNWMtYzM0ZS00NjIyLTg5YzYtYThlMGVjNzE1OGViXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_.jpg' },
 					title: 'Dune',
 					titleType: 'movie',
 					year: 2021
 				},
 				{
-					id: '/title/ff11083552/',
+					id: '/title/tt11083552/',
 					image: { url:'https://m.media-amazon.com/images/M/MV5BNGVkOTlhOTktNjZiNS00NDg3LWIxMDAtZTY5Y2E0YjllN2IxXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_.jpg' },
 					title: 'Wrath of Man',
 					titleType: 'movie',
 					year: 2021
 				},
 				{
-					id: '/title/ff5180504/',
+					id: '/title/tt5180504/',
 					image: { url:'https://m.media-amazon.com/images/M/MV5BN2FiOWU4YzYtMzZiOS00MzcyLTlkOGEtOTgwZmEwMzAxMzA3XkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_.jpg' },
 					title: 'The Witcher',
 					titleType: 'tvSeries',
 					year: 2019
 				},
 				{
-					id: '/title/ff7949218/',
+					id: '/title/tt7949218/',
 					image: { url:'https://m.media-amazon.com/images/M/MV5BM2JkM2Y5NTEtZWIwZS00ZTliLTk3MDMtNzY4MDNkNjg0NTkwXkEyXkFqcGdeQXVyMDM2NDM2MQ@@._V1_.jpg' },
 					title: 'See',
 					titleType: 'tvSeries',
 					year: 2019
+				},
+				{
+					id: '/title/tt2306299/',
+					image: { url:'https://m.media-amazon.com/images/M/MV5BODk4ZjU0NDUtYjdlOS00OTljLTgwZTUtYjkyZjk1NzExZGIzXkEyXkFqcGdeQXVyMDM2NDM2MQ@@._V1_.jpg' },
+					title: 'Vikings',
+					titleType: 'tvSeries',
+					year: 2013
 				}
 			],
 			movies: [],
 			initList: [],
-			details: undefined
+			details: null,
+			saved: JSON.parse(window.localStorage.getItem('savedMovies')) || []
 		},
 		orderBy: 'date90',
-		saved: 0 //save in local storage obj with id and name
+		showModal: false
 	},
 	methods: {
-		toggleMode() {
-			document.body.classList.toggle('light');
-		},
+		toggleMode: () => document.body.classList.toggle('light'),
 		// title/get-video-playback
 		// title/get-more-like-this
-		fetchHelper(param, endPoint = 'find?q=') {
+		callAPI(param, endPoint = 'find?q=') {
 			fetch("https://imdb8.p.rapidapi.com/title/"+endPoint+param, {
 				"method": "GET",
 				"headers": {
@@ -119,86 +147,64 @@ var app = new Vue({
 						app.data.initList = data.slice(0, 50);
 
 						let stringId = '';
-						stringId = stringId.concat(app.data.initList.map(ele => '&ids=tt'+ele.replace(/\D/g, '')));
+						stringId += app.data.initList.map(ele => '&ids=tt'+app.clearIdMovie(ele));
 						stringId = stringId.replaceAll(',', '').substring(1);
-
-						this.fetchHelper(stringId, 'get-meta-data?');
+						app.callAPI(stringId, 'get-meta-data?');
 						break;
+
 					case 'get-meta-data?':
 						let filteredData = [];
-						Object.keys(data).forEach(k => filteredData.push(data[k].title) );
-						filteredData = filteredData.filter(el => el.title != undefined && el.image && el.image.url != undefined)
+						Object.keys(data).forEach(k => filteredData.push(data[k].title));
+						app.filterUndefined(filteredData);
+						app.sortDecrescent(filteredData);
 
 						app.data.initList = filteredData;
 						app.data.movies = filteredData;
 						break;
+
 					case 'get-overview-details?tconst=':
 						app.data.details = data;
 						break;
+
 					default:
-						let clearData = data.results.filter(ele => ele.title != undefined && ele.image && ele.image.url != undefined);
-						this.sortDecrescent(clearData);
-						app.data.movies = clearData;
+						if(data.results === undefined) {
+							alert('No results found for: '+app.query);
+							app.startMovie();
+						} else {
+							let clearData = app.filterUndefined(data.results);
+							app.sortDecrescent(clearData);
+							app.data.movies = clearData;
+						}
 						break;
 				}
 			});
 		},
 
 		init() {
-			this.query = '';
-			this.orderBy = 'date90';
-			this.fetchHelper('', 'get-most-popular-movies?homeCountry=IT&purchaseCountry=IT&currentCountry=IT');
+			this.callAPI('', 'get-most-popular-movies?homeCountry=IT&purchaseCountry=IT&currentCountry=IT');
 		},
 
 		runQuery() {
+			this.title = this.query;
 			this.orderBy = 'date90';
-			this.fetchHelper(this.query);
-			this.scrollTopHelper();
+			this.callAPI(this.query);
+			this.scrollTopOn();
+			this.query = '';
 		},
 
 		startMovie(){
+			this.title = 'Popular Movies';
+			this.query = '';
 			this.orderBy = 'date90';
-			app.data.movies = app.data.initList;
+			this.data.movies = this.data.initList;
 			document.querySelector('#toggleNav').classList.remove('active');
-			this.scrollTopHelper();
+			this.scrollTopOn();
 		},
 
 		getDetails(e) {
 			let idMovie = e.target.id;
-			this.fetchHelper('tt'+idMovie, 'get-overview-details?tconst=');
-			// open page or pop up
-			// and see details from app.data.details
-		},
-		
-		saveMovie(e) {
-			e.target.textContent = '❤️ Saved';
-			e.target.disabled = true;
-
-			const savedMove = document.querySelector('#saved'),
-					nameMovie = e.target.value,
-					idMovie = e.target.id,
-					li = document.createElement('li'),
-					span = document.createElement('span'),
-					text = document.createTextNode(nameMovie);
-
-			span.setAttribute('id', idMovie);
-			span.onclick = this.removeSavedMovie;
-			li.appendChild(span);
-			li.appendChild(text);
-			savedMove.appendChild(li);
-
-			this.saved = this.saved + 1;
-			// app.data.movies[id].saved = 1
-		},
-		
-		removeSavedMovie(e) {
-			e.target.parentNode.remove();
-
-			const btnMovie = document.getElementById(e.target.id);
-			btnMovie.removeAttribute('disabled');
-			btnMovie.textContent = 'Save Movie';
-
-			this.saved = this.saved - 1;
+			this.callAPI('tt'+idMovie, 'get-overview-details?tconst=');			
+			this.showModal = true;
 		},
 
 		orderByVal(e) {
@@ -217,13 +223,49 @@ var app = new Vue({
 					break;
 			}
 		},
+		
+		saveMovie(e) {
+			const idMovie = e.target.id,
+					newSaved = this.data.movies.filter(movie => movie.id === '/title/tt'+idMovie+'/');
+			this.scrollTopOn(e, 'ul#saved');
+			this.data.saved = [ ...newSaved, ...this.data.saved ]
+										.filter((val, i, arr) => i === arr.findIndex(t => t.id === val.id));
+			this.saveMoviesToLocalStorage();
 
-		sortDecrescent(ele) {
-			return ele.sort((a, b) => b.year - a.year);
+			e.target.textContent = '❤️ Saved';
+			e.target.disabled = true;
 		},
-		scrollTopHelper() {
-			document.querySelector('.container').scrollTo({ top: 0, behavior: 'smooth' });
-		}
+		
+		removeSavedMovie(e) {
+			const idMovie = e.target.dataset.id;
+			this.data.saved = this.data.saved.filter(movie => movie.id !== '/title/tt'+idMovie+'/');
+			this.saveMoviesToLocalStorage();
+			
+			const btnMovie = document.getElementById(idMovie);
+			if(btnMovie && this.title !== 'Saved Movies') {
+				btnMovie.removeAttribute('disabled');
+				btnMovie.textContent = 'Save Movie';
+			}
+		},
+
+		saveMoviesToLocalStorage() {
+			localStorage.setItem('savedMovies', JSON.stringify(this.data.saved));
+		},
+
+		seeAllSaved() {
+			this.title = 'Saved Movies';
+			this.query = '';
+			this.orderBy = 'date90';
+			this.data.movies = this.sortDecrescent(this.data.saved);
+			document.querySelector('#toggleNav').classList.remove('active');
+			this.scrollTopOn();
+		},
+
+		filterUndefined: obj => obj.filter(ele => ele.title != undefined && ele.image && ele.image.url != undefined),
+		sortDecrescent: obj => obj.sort((a, b) => b.year - a.year),
+		clearIdMovie: rawId => rawId.replace(/\D/g, ''),
+		reverseDate: date => date.split('-').reverse().join('-'),
+		scrollTopOn: (e, c='.container') => document.querySelector(c).scrollTo({ top: 0, behavior: 'smooth' })
 	}
 });
 
